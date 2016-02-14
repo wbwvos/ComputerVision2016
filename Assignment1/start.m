@@ -1,6 +1,7 @@
 function start()
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
+%131072 g = 0.1138, 0.0785, -0.0353
 sphere1 = imread('sphere1.png');
 sphere2 = imread('sphere2.png');
 sphere3 = imread('sphere3.png');
@@ -24,10 +25,21 @@ I = [reshape(im2double(sphere1), width* height, 1), reshape(im2double(sphere2), 
 
 k = 2; %scaling factor
 
-for i = 1:numel(I)
-    construct_diagonal(I(i,:))* I(i,:)
-end
+V = k*S;
 
+%G = zeros(height*width, 3);
+%    for i = 1:height*width
+%        diag = construct_diagonal(I(i,:));
+%        G = linsolve(diag*V, diag*transpose(I(i,:)))
+%    end 
+diag = construct_diagonal(I(131072,:));
+voor = diag*V
+na = diag*transpose(I(131071,:))
+size(voor)
+size(na)
+%diag = construct_diagonal(I(131072,:));
+%G = linsolve(diag*V, diag*transpose(I(131071,:)))
+%G2 = inv(diag*V) * (diag*transpose(I(131071,:)))
 end
 
 function diagonal = construct_diagonal(array)
