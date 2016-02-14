@@ -21,7 +21,7 @@ S(4,:) = S(4,:)./norm(S(4,:));
 S(5,:) = S(5,:)./norm(S(5,:));
 
 [width, height] = size(sphere1);
-I = [reshape(im2double(sphere1), width* height, 1), reshape(im2double(sphere2), width* height, 1), reshape(im2double(sphere3), width* height, 1), reshape(im2double(sphere4), width* height, 1), reshape(im2double(sphere2), width* height, 1)];
+I = [reshape(im2double(sphere1), width* height, 1), reshape(im2double(sphere2), width* height, 1), reshape(im2double(sphere3), width* height, 1), reshape(im2double(sphere4), width* height, 1), reshape(im2double(sphere5), width* height, 1)];
 
 k = 1; %scaling factor
 
@@ -43,6 +43,27 @@ for i = 1:height*width
     end
 end
 warning('on','MATLAB:rankDeficientMatrix');
+
+[X,Y] = meshgrid(0:1:width, 0:1:height);
+Z = zeros(512,512)
+size(Z)
+figure
+U = reshape(normal(:,1), width, height);
+size(U)
+V = reshape(normal(:,2), width, height);
+size(V)
+W = reshape(normal(:,3), width, height);
+size(W)
+quiver3(Z,U,V,W)
+view(0, 512)
+% 
+% figure
+% quiver3(X,Y,Z,U,V,W,0.1)
+% 
+% hold on
+% surf(X,Y,Z)
+% view(0,512)
+% hold off
 
 end
 
