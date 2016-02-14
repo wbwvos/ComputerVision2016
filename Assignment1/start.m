@@ -12,7 +12,7 @@ S = [   0,     0,   -1;
        -1,     1,   -1;
         1,     1,   -1;
        -1,    -1,   -1;
-        1,    -1,    1];
+        1,    -1,   -1];
     
 S(1,:) = S(1,:)./norm(S(1,:));
 S(2,:) = S(2,:)./norm(S(2,:));
@@ -56,14 +56,6 @@ W = reshape(normal(:,3), width, height);
 size(W)
 quiver3(Z,U,V,W)
 view(0, 512)
-% 
-% figure
-% quiver3(X,Y,Z,U,V,W,0.1)
-% 
-% hold on
-% surf(X,Y,Z)
-% view(0,512)
-% hold off
 
 end
 
