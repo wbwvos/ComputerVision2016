@@ -23,23 +23,27 @@ S(5,:) = S(5,:)./norm(S(5,:));
 [width, height] = size(sphere1);
 I = [reshape(im2double(sphere1), width* height, 1), reshape(im2double(sphere2), width* height, 1), reshape(im2double(sphere3), width* height, 1), reshape(im2double(sphere4), width* height, 1), reshape(im2double(sphere2), width* height, 1)];
 
-k = 2; %scaling factor
+k = 1; %scaling factor
 
 V = k*S;
 
-%G = zeros(height*width, 3);
-%    for i = 1:height*width
-%        diag = construct_diagonal(I(i,:));
-%        G = linsolve(diag*V, diag*transpose(I(i,:)))
-%    end 
-diag = construct_diagonal(I(131072,:));
-voor = diag*V
-na = diag*transpose(I(131071,:))
-size(voor)
-size(na)
-%diag = construct_diagonal(I(131072,:));
-%G = linsolve(diag*V, diag*transpose(I(131071,:)))
-%G2 = inv(diag*V) * (diag*transpose(I(131071,:)))
+G = zeros(height*width, 3);
+albedo = zeros(height*width, 3);
+normal = zeros(height*width, 3);
+warning('off','MATLAB:rankDeficientMatrix');
+for i = 1:height*width
+    diag = construct_diagonal(I(i,:));
+    if sum(diag) == 0.0
+    else
+        Gxy = linsolve(diag*V, diag*transpose(I(i,:))); 
+        G(i,:) = Gxy;
+        albedoxy = Gxy./norm(Gxy);
+        albedo(i,:) = albedoxy;
+        normal(i,:) = (1./albedoxy).*Gxy;
+    end
+end
+warning('on','MATLAB:rankDeficientMatrix');
+
 end
 
 function diagonal = construct_diagonal(array)
