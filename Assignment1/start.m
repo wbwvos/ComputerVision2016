@@ -14,11 +14,11 @@ sphere5 = imread('sphere5.png');
 %        -1,    -1,   -1;
 %         1,    -1,   -1];
     
-S = [   0,     0,   -1;
-        1,    -1,   -1;
-       -1,    -1,   -1;
-        1,     1,   -1;
-       -1,     1,   -1];
+S = [    0,      0,   -1;
+        -1,     -1,   -1;
+         1,     -1,   -1;
+        -1,      1,   -1;
+         1,      1,   -1];
     
 S(1,:) = S(1,:)./norm(S(1,:));
 S(2,:) = S(2,:)./norm(S(2,:));
@@ -34,7 +34,7 @@ k = 1; %scaling factor
 V = k*S;
 
 G = zeros(height*width, 3);
-albedo = zeros(height*width, 3);
+albedo = zeros(height*width, 1);
 normal = zeros(height*width, 3);
 warning('off','MATLAB:rankDeficientMatrix');
 for i = 1:height*width
@@ -43,39 +43,56 @@ for i = 1:height*width
     else
         Gxy = linsolve(diag*V, diag*transpose(I(i,:))); 
         G(i,:) = Gxy;
-        albedoxy = Gxy./norm(Gxy);
+        albedoxy = norm(Gxy);
         albedo(i,:) = albedoxy;
         normal(i,:) = (1./albedoxy).*Gxy;
     end
 end
 warning('on','MATLAB:rankDeficientMatrix');
-
+imshow(reshape(albedo, width, height))
 [X,Y] = meshgrid(1:1:width, 1:1:height);
 Z = zeros(512,512);
-%figure
 A = reshape(normal(:,1), width, height);
+A = -A;
 B = reshape(normal(:,2), width, height);
+B = -B;
 C = reshape(normal(:,3), width, height);
-%quiver3(Z,A,B,C)
-%view(0, 512)
+C = -C;
+
 sizeNormal = size(normal);
 N = zeros(sizeNormal(1), 3);
 P = normal(:,1)./normal(:,3);
 P = reshape(P, width, height);
+P(find(isnan(P))) = 0.0;
+P(find(P > 1)) = 1;
+P(find(P < -1)) = -1;
+P = P';
 Q = normal(:,2)./normal(:,3);
 Q = reshape(Q, width, height);
+Q(find(isnan(Q))) = 0;
+Q(find(Q > 1)) = 1;
+Q(find(Q < -1)) = -1;
+Q = Q';
 H = zeros(width, height);
 
 for y = 2:height
-    H(y,1) = H(y-1,1) + P(y, 1);
+    H(y,1) = H(y - 1, 1) + P(y, 1);
 end
 
 for y = 1:height
     for x = 2:width
-        H(y, x) = H(y, x-1) + Q(y, x);
+        H(y, x) = H(y, x - 1) + Q(y, x);
     end
 end
-mesh(X, Y, H)
+H = -H;
+sp = 16;
+figure
+quiver3(X(1:sp:end, 1:sp:end), Y(1:sp:end, 1:sp:end), H(1:sp:end, 1:sp:end), A(1:sp:end, 1:sp:end), B(1:sp:end, 1:sp:end), C(1:sp:end, 1:sp:end), 0.5)
+
+hold on
+surf(X(1:sp:end, 1:sp:end),Y(1:sp:end, 1:sp:end),H(1:sp:end, 1:sp:end))
+hold off
+
 end
 
 function diagonal = construct_diagonal(array)
