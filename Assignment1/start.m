@@ -8,11 +8,17 @@ sphere3 = imread('sphere3.png');
 sphere4 = imread('sphere4.png');
 sphere5 = imread('sphere5.png');
 
+% S = [   0,     0,   -1;
+%        -1,     1,   -1;
+%         1,     1,   -1;
+%        -1,    -1,   -1;
+%         1,    -1,   -1];
+    
 S = [   0,     0,   -1;
-       -1,     1,   -1;
-        1,     1,   -1;
+        1,    -1,   -1;
        -1,    -1,   -1;
-        1,    -1,   -1];
+        1,     1,   -1;
+       -1,     1,   -1];
     
 S(1,:) = S(1,:)./norm(S(1,:));
 S(2,:) = S(2,:)./norm(S(2,:));
@@ -44,19 +50,32 @@ for i = 1:height*width
 end
 warning('on','MATLAB:rankDeficientMatrix');
 
-[X,Y] = meshgrid(0:1:width, 0:1:height);
-Z = zeros(512,512)
-size(Z)
-figure
-U = reshape(normal(:,1), width, height);
-size(U)
-V = reshape(normal(:,2), width, height);
-size(V)
-W = reshape(normal(:,3), width, height);
-size(W)
-quiver3(Z,U,V,W)
-view(0, 512)
+[X,Y] = meshgrid(1:1:width, 1:1:height);
+Z = zeros(512,512);
+%figure
+A = reshape(normal(:,1), width, height);
+B = reshape(normal(:,2), width, height);
+C = reshape(normal(:,3), width, height);
+%quiver3(Z,A,B,C)
+%view(0, 512)
+sizeNormal = size(normal);
+N = zeros(sizeNormal(1), 3);
+P = normal(:,1)./normal(:,3);
+P = reshape(P, width, height);
+Q = normal(:,2)./normal(:,3);
+Q = reshape(Q, width, height);
+H = zeros(width, height);
 
+for y = 2:height
+    H(y,1) = H(y-1,1) + P(y, 1);
+end
+
+for y = 1:height
+    for x = 2:width
+        H(y, x) = H(y, x-1) + Q(y, x);
+    end
+end
+mesh(X, Y, H)
 end
 
 function diagonal = construct_diagonal(array)
