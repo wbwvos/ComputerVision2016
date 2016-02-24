@@ -9,4 +9,6 @@ kernel_y = gaussian(sigma_y, 11);
 image = conv2(image, kernel_x, 'same');
 imOut = conv2(image, transpose(kernel_y), 'same');
 
+imshow(imOut)
+
 end
