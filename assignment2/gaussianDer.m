@@ -5,11 +5,11 @@ image = im2double(rgb2gray(imread(image_path)));
 x = linspace((-(kernelLength-1)/2),((kernelLength-1)/2), kernelLength);
 Gd = (-(x)./(sigma^2)).*G;
 %Gd = Gd./(sum(Gd));
-imOutX = conv2(image, Gd, 'valid');
-imOutY = conv2(image, Gd', 'valid');
+imOutX = conv2(image, Gd, 'same');
+imOutY = conv2(image, Gd', 'same');
 size(imOutX)
 size(imOutY)
-%imOut = sqrt(imOutX.^2 + imOutY.^2);
+imOut = sqrt(imOutX.^2 + imOutY.^2);
 
 imshow(im2double(imOutX), []);
 figure
