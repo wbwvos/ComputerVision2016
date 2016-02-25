@@ -11,9 +11,14 @@ size(imOutX)
 size(imOutY)
 imOut = sqrt(imOutX.^2 + imOutY.^2);
 
-imshow(im2double(imOutX), []);
+%imshow(im2double(imOutX), []);
+%figure
+%imshow(im2double(imOutY), []);
+%figure
+%imshow(im2double(imOut), []);
+
 figure
-imshow(im2double(imOutY), []);
+plot(x, G)
 figure
-imshow(im2double(imOut), []);
+plot(x, Gd)
 end
