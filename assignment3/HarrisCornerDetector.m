@@ -2,8 +2,8 @@ function [H, coordinates] = HarrisCornerDetector()
 rawImage  = imread('person_toy/00000001.jpg');
 image = im2double(rgb2gray(rawImage));
 %image = im2double(rgb2gray(imread('pingpong/0000.jpg')));
-sigma = 1;
-G = fspecial('gauss',[1, 5], sigma);
+sigma = 0.8;
+G = fspecial('gauss',[1, 7], sigma);
 Gd = gradient(G);
 
 Ix = conv2(image, Gd, 'same');
@@ -17,9 +17,9 @@ C = Iy.^2;
 B = Ix.*Iy;
 [imageHeight, imageWidth] = size(image);
 %imshow(H, []);
-Hmatrix = zeros(size(image));
-windowWidth = 5;
-windowHeight = 5;
+Hmatrix = ones(size(image));
+windowWidth = 7;
+windowHeight = 7;
 coordinates = zeros(10, 3);
 counter =1;
 threshold = 1;
