@@ -1,7 +1,9 @@
 function tracking()
 close all
 %directory = 'C:\Users\Kasper\Documents\GitHub\ComputerVision2016\assignment3\pingpong\'; 
-directory = 'C:\Users\Kasper\Documents\GitHub\ComputerVision2016\assignment3\person_toy\';
+%folder = 'person_toy';
+folder = 'pingpong';
+directory = strcat(pwd, '\',folder,'\');
 contents = dir(directory);
 windowWidth  = 11;
 windowHeight = 11;
@@ -25,11 +27,14 @@ for i = 1:numel(contents)-1
   image2 = strcat(directory,filename2);
   newcoordinates = Lucas_Kanade2(image1, image2, coordinates);   
   coordinates = newcoordinates;
+  M(i)=getframe(gcf);
   end
   %if i == 10
   %    break
   %end
 end
+
+movie2avi(M(3:end), strcat(folder, 'Movie.avi'));
 
 
 end
@@ -70,7 +75,7 @@ for i = 1:m
   Vx(i,1) = v(1);
   Vy(i,1) = v(2);
 end
-figure
+%figure
 imshow(rawImage2);
 hold on
 quiver(coordinates(:,2), coordinates(:,1), Vx, Vy)
