@@ -11,7 +11,7 @@ coordinates = 0;
 for i = 1:numel(contents)-1
   filename = contents(i).name;
   filename
-  [path, name, ext] = fileparts(filename)
+  [path, name, ext] = fileparts(filename);
   
   filename2 = contents(i+1).name;
   %[path2, name2, ext2] = fileparts(filename2);
@@ -70,7 +70,7 @@ for i = 1:m
   Vx(i,1) = v(1);
   Vy(i,1) = v(2);
 end
-%figure
+figure
 imshow(rawImage2);
 hold on
 quiver(coordinates(:,2), coordinates(:,1), Vx, Vy)
@@ -79,5 +79,5 @@ coordinates(:, 1) = coordinates(:,1)+ round(Vy);
 coordinates(:, 2) = coordinates(:,2)+ round(Vx);
 %Vy
 %Vx
-newcoordinates = coordinates
+newcoordinates = coordinates;
 end
