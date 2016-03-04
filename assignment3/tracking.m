@@ -1,6 +1,8 @@
 function tracking()
 close all
-contents = dir('C:\Users\Kasper\Documents\GitHub\ComputerVision2016\assignment3\pingpong');
+%directory = 'C:\Users\Kasper\Documents\GitHub\ComputerVision2016\assignment3\pingpong\'; 
+directory = 'C:\Users\Kasper\Documents\GitHub\ComputerVision2016\assignment3\person_toy\';
+contents = dir(directory);
 windowWidth  = 11;
 windowHeight = 11;
 windowBorder = floor(windowHeight/2);
@@ -8,18 +10,19 @@ imcounter = 0;
 coordinates = 0;
 for i = 1:numel(contents)-1
   filename = contents(i).name;
-  [path, name, ext] = fileparts(filename);
+  filename
+  [path, name, ext] = fileparts(filename)
   
   filename2 = contents(i+1).name;
-  [path2, name2, ext2] = fileparts(filename2);
+  %[path2, name2, ext2] = fileparts(filename2);
   
-  if ext == '.jpeg'
+  if strcmp(ext, '.jpeg') || strcmp(ext, '.jpg')
       imcounter = imcounter + 1;
       if imcounter == 1
-        [H, coordinates] = HarrisCornerDetector(strcat('\pingpong\',name, ext));
+        [H, coordinates] = HarrisCornerDetector(strcat(directory,filename));
       end
-  image1 = strcat('\pingpong\',name, ext);
-  image2 = strcat('\pingpong\',name2, ext2);
+  image1 = strcat(directory,filename);
+  image2 = strcat(directory,filename2);
   newcoordinates = Lucas_Kanade2(image1, image2, coordinates);   
   coordinates = newcoordinates;
   end
@@ -67,14 +70,14 @@ for i = 1:m
   Vx(i,1) = v(1);
   Vy(i,1) = v(2);
 end
-figure
+%figure
 imshow(rawImage2);
 hold on
 quiver(coordinates(:,2), coordinates(:,1), Vx, Vy)
 
 coordinates(:, 1) = coordinates(:,1)+ round(Vy);
 coordinates(:, 2) = coordinates(:,2)+ round(Vx);
-Vy
-Vx
+%Vy
+%Vx
 newcoordinates = coordinates
 end
