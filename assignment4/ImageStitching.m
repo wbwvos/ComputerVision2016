@@ -1,3 +1,5 @@
+
+run('vlfeat-0.9.20/toolbox/vl_setup')
 %I = vl_impattern('left.jpg') ;
 %image(I) ;
 ima = rgb2gray(imread('left.jpg'));
