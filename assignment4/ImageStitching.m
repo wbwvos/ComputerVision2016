@@ -2,9 +2,9 @@
 run('vlfeat-0.9.20/toolbox/vl_setup')
 %I = vl_impattern('left.jpg') ;
 %image(I) ;
-ima = rgb2gray(imread('left.jpg'));
+ima = imread('boat/img1.pgm');
 Ia = single(ima) ;
-imb = rgb2gray(imread('right.jpg'));
+imb = imread('boat/img2.pgm');
 Ib = single(imb) ;
 %[f,d] = vl_sift(I) ;
 
@@ -17,7 +17,7 @@ Ib = single(imb) ;
 
 [fa, da] = vl_sift(Ia) ;
 [fb, db] = vl_sift(Ib) ;
-[matches, scores] = vl_ubcmatch(da, db, 2);
+[matches, scores] = vl_ubcmatch(da, db);
 %h3 = vl_plotsiftdescriptor(d(:,sel),f(:,sel)) ;
 %set(h3,'color','g') ;
 
@@ -27,7 +27,7 @@ bestTransformation = 0;
 
 for i = 1:iterations
     perm = randperm(size(matches, 2));
-    nMatches = 5;
+    nMatches = 3;
     sel = perm(1:nMatches);
     A = zeros(2*nMatches, 6);
     b = zeros(2*nMatches, 1);
@@ -62,7 +62,7 @@ for i = 1:iterations
         %transformations(i, 1) = xt;
         %transformations(i, 2) = yt;
         dist = sqrt((xt - xb)^2 + (yt - yb)^2);
-        if dist <= 3
+        if dist <= 10
             inliers = inliers + 1;
         end
 
@@ -71,8 +71,8 @@ for i = 1:iterations
     %     h = line([xa ; xt + size(Ia, 2)], [ya ; yt]) ;
     %     set(h,'linewidth', 0.5, 'color', 'y') ;
     end
-    
     if inliers > bestInliers
+        bestSel = sel;
         bestInliers = inliers;
         bestTransformation = transformation;
     end
@@ -88,29 +88,28 @@ t2 = bestTransformation(6);
 bestInliers
 totalMatches = size(matches,2)
 
-tform = maketform('affine',[m1 m3 0; m2 m4 0; t1 t2 1]);
-Iat = imtransform(ima, tform, 'nearest');
-add = zeros(size(Iat, 1)- size(Ib, 1 ), size(Ib, 2));
-imshow(cat(2, Iat, cat(1, add, Ib))) ;
+tform = maketform('affine',[m1 m2 0; m3 m4 0; t1 t2 1]);
+Ibt = imtransform(imb, tform, 'nearest');
+[left, right] = matchHeight(Ia, Ibt);
+imshow(cat(2, left, right)) ;
 
-% figure(2) ; clf ;
-% 
-% add = zeros(size(Ia, 1)- size(Ib, 1 ), size(Ib, 2));
-% imagesc(cat(2, Ia, cat(1, Ib, add))) ;
-% 
-% xa = fa(1,matches(1,sel)) ;
-% xb = fb(1,matches(2,sel)) + size(Ia,2) ;
-% ya = fa(2,matches(1,sel)) ;
-% yb = fb(2,matches(2,sel)) ;
-% 
-% hold on ;
-% h = line([xa ; xb], [ya ; yb]) ;
-% set(h,'linewidth', 0.5, 'color', 'b') ;
-% 
-% vl_plotframe(fa(:,matches(1,sel))) ;
-% fb(1,:) = fb(1,:) + size(Ia,2) ;
-% vl_plotframe(fb(:,matches(2,sel))) ;
-% axis image off ;
+figure(2) ; clf ;
+[Ileft, Iright] = matchHeight(Ia, Ib);
+imagesc(cat(2, Ileft, Iright)) ;
+
+xa = fa(1,matches(1,bestSel)) ;
+xb = fb(1,matches(2,bestSel)) + size(Ia,2) ;
+ya = fa(2,matches(1,bestSel)) ;
+yb = fb(2,matches(2,bestSel)) ;
+
+hold on ;
+h = line([xa ; xb], [ya ; yb]) ;
+set(h,'linewidth', 0.5, 'color', 'b') ;
+
+vl_plotframe(fa(:,matches(1,bestSel))) ;
+fb(1,:) = fb(1,:) + size(Ia,2) ;
+vl_plotframe(fb(:,matches(2,bestSel))) ;
+axis image off ;
 
 
 
