@@ -1,18 +1,17 @@
-function imageStitching( path1, path2 )
 
 run('vlfeat-0.9.20/toolbox/vl_setup')
 %I = vl_impattern('left.jpg') ;
 %image(I) ;
-ima = rgb2gray(imread(path1));
+ima = imread('boat/img1.pgm');
 Ia = single(ima) ;
-imb = rgb2gray(imread(path2));
+imb = imread('boat/img2.pgm');
 Ib = single(imb) ;
 
 [fa, da] = vl_sift(Ia) ;
 [fb, db] = vl_sift(Ib) ;
 [matches, scores] = vl_ubcmatch(da, db, 3);
 
-iterations = 20;
+iterations = 10;
 bestInliers = 0;
 bestTransformation = 0;
 
@@ -25,10 +24,10 @@ for i = 1:iterations
     i = 1;
     for matchno = sel
         match = matches(:, matchno);
-        xb = fa(1,matches(1,matchno));
-        xa = fb(1,matches(2,matchno));
-        yb = fa(2,matches(1,matchno));
-        ya = fb(2,matches(2,matchno));
+        xa = fa(1,matches(1,matchno));
+        xb = fb(1,matches(2,matchno));
+        ya = fa(2,matches(1,matchno));
+        yb = fb(2,matches(2,matchno));
         A(i, :) = [xa, ya, 0, 0, 1, 0];
         A(i+1, :) = [0, 0, xa, ya, 0, 1];
         b(i, :) = xb;
@@ -41,10 +40,10 @@ for i = 1:iterations
     transformations = zeros(size(matches,2), 2);
     inliers = 0 ;
     for i = 1:size(matches,2)    
-        xb = fa(1,matches(1,i));
-        xa = fb(1,matches(2,i));
-        yb = fa(2,matches(1,i));
-        ya = fb(2,matches(2,i));
+        xa = fa(1,matches(1,i));
+        xb = fb(1,matches(2,i));
+        ya = fa(2,matches(1,i));
+        yb = fb(2,matches(2,i));
         A = [xa, ya, 0,  0,  1, 0 ;
              0 , 0 , xa, ya, 0, 1 ];
         trans = A*transformation;
@@ -78,16 +77,45 @@ t2 = bestTransformation(6);
 bestInliers
 totalMatches = size(matches,2)
 
-% tform = maketform('affine',[m1 m3 0; m2 m4 0; t1 t2 1]);
-% [Ibt,xdata,ydata] = imtransform(imb, tform, 'nearest');
-% xdata
-% ydata
-% %add = zeros(abs(round( t2 + xdata(2))),size(Ibt, 2));
-% %Ibt = cat(1, add, Ibt);
-% [left, right] = matchHeight(Ia, Ibt);
-% 
-% imshow(cat(2, left, right(:,abs(round(ydata(1))):end))) ;
+tform = maketform('affine',[m1 m2 0; m3 m4 0; t1 t2 1]);
+Ibt = imtransform(imb, tform, 'nearest');
+[left, right] = matchHeight(Ia, Ibt);
+imshow(cat(2, left, right)) ;
 
-transform(bestTransformation, ima, imb);
-end
+figure(2) ; clf ;
+[Ileft, Iright] = matchHeight(Ia, Ib);
+imagesc(cat(2, Ileft, Iright)) ;
+
+perm = randperm(size(matches, 2));
+nMatches = 50;
+sel = perm(1:nMatches);
+xa = fa(1,matches(1,sel)) ;
+xb = fb(1,matches(2,sel)) + size(Ia,2) ;
+ya = fa(2,matches(1,sel)) ;
+yb = fb(2,matches(2,sel)) ;
+
+hold on ;
+h = line([xa ; xb], [ya ; yb]) ;
+set(h,'linewidth', 0.5, 'color', 'b') ;
+
+vl_plotframe(fa(:,matches(1,sel))) ;
+fb(1,:) = fb(1,:) + size(Ia,2) ;
+vl_plotframe(fb(:,matches(2,sel))) ;
+
+xa = fa(1,matches(1,bestSel)) ;
+xb = fb(1,matches(2,bestSel)) ;
+ya = fa(2,matches(1,bestSel)) ;
+yb = fb(2,matches(2,bestSel)) ;
+
+hold on ;
+h = line([xa ; xb], [ya ; yb]) ;
+set(h,'linewidth', 1, 'color', 'r') ;
+
+vl_plotframe(fa(:,matches(1,bestSel))) ;
+vl_plotframe(fb(:,matches(2,bestSel))) ;
+axis image off ;
+
+
+
+
 
