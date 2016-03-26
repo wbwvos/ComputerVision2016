@@ -1,4 +1,4 @@
-function BoW()
+function visualvocabulary()
 run('vlfeat-0.9.20/toolbox/vl_setup')
 sigma = 1;
 k = 2;
@@ -33,7 +33,7 @@ for i=1:length(subdirs)
         end
     end
 end
-allDescriptors = double(allDescriptors);
-size(allDescriptors)
-[idx, C] = kmeans(allDescriptors, k);
+allDescriptors = double(allDescriptors');
+%[idx, C] = kmeans(allDescriptors, 400);
+
 end
