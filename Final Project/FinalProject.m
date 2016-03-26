@@ -5,7 +5,7 @@ k = 2;
 
 allDescriptors = []; 
 
-folder = 'ImageData';
+folder = 'Caltech4\ImageData';
 directory = strcat(pwd, '\',folder,'\');
 
 subdirs = dir(directory);
@@ -15,7 +15,7 @@ for i=1:length(subdirs)
     if exist(fileCheck) == 2
         files = dir(path);
         for j=1:length(files) 
-            filename = strcat(path, '\', files(j+3).name)
+            filename = strcat(path, '\', files(j+3).name);
             im = rgb2gray(imread(filename));
             im = single(im);
             
@@ -33,6 +33,7 @@ for i=1:length(subdirs)
         end
     end
 end
-descriptors = double(allDescriptors);
+allDescriptors = double(allDescriptors);
+size(allDescriptors)
 [idx, C] = kmeans(allDescriptors, k);
 end
