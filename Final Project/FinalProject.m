@@ -19,10 +19,11 @@ for i=1:length(subdirs)
             im = rgb2gray(imread(filename));
             im = single(im);
             
-            Is = vl_imsmooth(im, sigma) ;
-            [frames, descriptors] = vl_dsift(Is) ;
+            %Is = vl_imsmooth(im, sigma) ;
+            %[frames, descriptors] = vl_dsift(Is) ;
 
-            %[frames, descriptors] = vl_sift(im);  
+            [frames, descriptors] = vl_sift(im);  
+            
             if i == 4 && j == 1
                 allDescriptors = descriptors;
             else
@@ -34,6 +35,32 @@ for i=1:length(subdirs)
     end
 end
 allDescriptors = double(allDescriptors');
-%[idx, C] = kmeans(allDescriptors, 400);
+[idx, C] = kmeans(allDescriptors, 4);
+histogram = computeHist(C', 'Caltech4\ImageData\motorbikes_test\img050.jpg')
+end
+
+function histogram = computeHist(C, filename)
+im = rgb2gray(imread(filename));
+im = single(im);
+
+histogram = zeros(1, 400);
+[frames, descriptors] = vl_sift(im);
+descriptors = double(descriptors);
+
+smallest = 10000000;
+cluster = 0;
+for i = 1:Dlength(:,2)
+    for j = 1:Clength(:,2)
+        difference = norm(descriptors(:,i) - C(:,j));
+        if difference < smallest
+            smallest = difference;
+            cluster = j;
+        end
+        %break
+    end
+    
+    histogram(cluster) = histogram(cluster) + 1;
+end
+
 
 end
