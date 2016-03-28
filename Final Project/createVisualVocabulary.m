@@ -32,8 +32,9 @@ for i=1:length(subdirs)
         end
     end
 end
-allDescriptors = double(allDescriptors');
-totalDescriptors = size(allDescriptors, 1)
-[idx, C] = kmeans(allDescriptors, vocabularySize, 'maxIter', 500, 'Display', 'iter');
+allDescriptors = double(allDescriptors);
+totalDescriptors = size(allDescriptors, 2)
+[C, A] = vl_kmeans(allDescriptors, vocabularySize, 'Algorithm','ANN', 'MaxNumIterations', 200); %, 'maxIter', 500, 'Display', 'iter'
+C = C';
 save('codebook.mat','C', 'vocabularySize', 'noTrainingImages');
 end
