@@ -17,10 +17,13 @@ for i = 1:length(classes)
         
         data(j,:) = histogram;
         if strcmp(trainingClass, classes(i))
-           labels(j, 1) = 1;
+           labels(j + noTrainingImages*(i-1), 1) = 1;
         end
+
+        
     end
-end                
+end  
+        size(labels)
 SVMModel = fitcsvm(data,labels)
 %svmStruct = svmtrain(data, labels);
 
