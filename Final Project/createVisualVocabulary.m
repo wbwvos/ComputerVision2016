@@ -12,7 +12,7 @@ for i=1:length(subdirs)
     if exist(fileCheck) == 2
         files = dir(path);
         for j=1:noTrainingImages %length(files) 
-            filename = strcat(path, '\', files(j+3).name)
+            filename = strcat(path, '\', files(j+3).name);
             im = imread(filename);
             if size(im, 3) > 1
                 im = rgb2gray(im);
@@ -34,6 +34,6 @@ for i=1:length(subdirs)
 end
 allDescriptors = double(allDescriptors');
 totalDescriptors = size(allDescriptors, 1)
-[idx, C] = kmeans(allDescriptors, vocabularySize);
+[idx, C] = kmeans(allDescriptors, vocabularySize, 'maxIter', 500, 'Display', 'iter');
 save('codebook.mat','C', 'vocabularySize', 'noTrainingImages');
 end

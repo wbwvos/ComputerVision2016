@@ -1,66 +1,45 @@
-function visualvocabulary()
-run('vlfeat-0.9.20/toolbox/vl_setup')
-sigma = 1;
-k = 2;
-
-allDescriptors = []; 
-
-folder = 'Caltech4\ImageData';
-directory = strcat(pwd, '\',folder,'\');
-
-subdirs = dir(directory);
-for i=1:length(subdirs)
-    path = strcat(directory ,subdirs(i).name);
-    fileCheck = strcat(path, '\img400.jpg');
-    if exist(fileCheck) == 2
-        files = dir(path);
-        for j=1:length(files) 
-            filename = strcat(path, '\', files(j+3).name);
-            im = rgb2gray(imread(filename));
-            im = single(im);
-            
-            %Is = vl_imsmooth(im, sigma) ;
-            %[frames, descriptors] = vl_dsift(Is) ;
-
-            [frames, descriptors] = vl_sift(im);  
-            
-            if i == 4 && j == 1
-                allDescriptors = descriptors;
-            else
-            allDescriptors = [allDescriptors descriptors];
-            end
-            break
-            
-        end
+function FinalProject()
+    run('vlfeat-0.9.20/toolbox/vl_setup')
+    if exist('codebook.mat', 'file') ~= 2
+        'no codebook.mat file found. Creating a visualVocabulary with:'
+        vocabularySize = 400
+        noTrainingImages = 50
+        createVisualVocabulary(vocabularySize, noTrainingImages);
     end
-end
-allDescriptors = double(allDescriptors');
-[idx, C] = kmeans(allDescriptors, 4);
-histogram = computeHist(C', 'Caltech4\ImageData\motorbikes_test\img050.jpg')
-end
+    trainingImagePerClass = 10
+    train = 0;
+    if train == 1
+        'Training airplanes SVM classifier'
+        airplanesSVM = compact(trainSVM('airplanes', trainingImagePerClass));
+        save('airplanesSVM.mat', 'airplanesSVM');
 
-function histogram = computeHist(C, filename)
-im = rgb2gray(imread(filename));
-im = single(im);
-
-histogram = zeros(1, 400);
-[frames, descriptors] = vl_sift(im);
-descriptors = double(descriptors);
-
-smallest = 10000000;
-cluster = 0;
-for i = 1:Dlength(:,2)
-    for j = 1:Clength(:,2)
-        difference = norm(descriptors(:,i) - C(:,j));
-        if difference < smallest
-            smallest = difference;
-            cluster = j;
-        end
-        %break
+%         'Training cars SVM classifier'
+%         carsSVM = trainSVM('cars', trainingImagePerClass);
+%         save('carsSVM.mat', 'carsSVM');
+% 
+%         'Training faces SVM classifier'
+%         facesSVM = trainSVM('faces', trainingImagePerClass);
+%         save('facesSVM.mat', 'facesSVM');
+% 
+%         'Training motorbikes SVM classifier'
+%         motorbikesSVM = trainSVM('motorbikes', trainingImagePerClass);
+%         save('motorbikesSVM.mat', 'motorbikesSVM');
+    else
+        airplanesSVM = load('airplanesSVM.mat', 'airplanesSVM');
+        airplanesSVM = airplanesSVM.airplanesSVM
+        
     end
+    'Classifying images'
+    [airplanesLabels, airplanesScores] = classifySVM(airplanesSVM);
+%     carsResult = classifySVM(carsSVM);
+%     facesResult = classifySVM(facesSVM);
+%     motorbikesResult = classifySVM(motorbikesSVM);
     
-    histogram(cluster) = histogram(cluster) + 1;
 end
 
 
-end
+
+
+
+
+

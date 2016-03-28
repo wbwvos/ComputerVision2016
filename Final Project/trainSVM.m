@@ -1,4 +1,4 @@
-function [svmStruct] = trainSVM(trainingClass, noTrainingImages)
+function [SVMModel] = trainSVM(trainingClass, noTrainingImages)
 classes = {'airplanes', 'cars', 'faces', 'motorbikes'};
 
 folder = 'Caltech4\ImageData';
@@ -21,7 +21,7 @@ for i = 1:length(classes)
         end
     end
 end                
+SVMModel = fitcsvm(data,labels)
+%svmStruct = svmtrain(data, labels);
 
-svmStruct = svmtrain(data, labels);
-classifySVM(svmStruct, data);
 end
